@@ -2,6 +2,7 @@ var activePiece = {x:0,y:0,data:[],type:"",rotation:0};
 var grid = [];
 var cellWidth = 10;
 var width, height;
+var gameSpeed = 250;
 
 function TetrisGame() {
 	// Setup Canvas
@@ -11,8 +12,11 @@ function TetrisGame() {
 	height 	= $("#canvas").height();
 
 	// Start game
+	var start = new Date().getTime();
+	var checked;
+
 	restart();
-	gameLoop = setInterval(paintGame, 120);
+	gameLoop = setInterval(paintGame, 10);
 
 	function restart() {
 		generatePiece();
@@ -26,7 +30,12 @@ function TetrisGame() {
 		context.strokeStyle = "black";
 		context.strokeRect(0, 0, width, height);
 
-		updateActivePiece();
+		if ((checked = new Date().getTime()) - start > gameSpeed) {
+			updateActivePiece();
+			start = new Date().getTime();
+			gameSpeed = 250;
+		}
+
 		drawActivePiece();
 		drawGrid();
 	}
@@ -215,11 +224,10 @@ TetrisGame.prototype.keydown = function(e) {
 	}	
 	else if (key == "39") { // right
 		checkCollision("right");
-	}	
-	else if (key == "40") { // down
-
 	}
-
+	else if (key == "40") { // down
+		gameSpeed = 1;
+	}
 
 	function rotateActivePiece() {
 		var newData = [];
